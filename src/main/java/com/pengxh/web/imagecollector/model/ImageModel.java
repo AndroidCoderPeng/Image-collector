@@ -24,26 +24,44 @@ public class ImageModel extends Model<ImageModel> {
     private Integer id;
 
     /**
+     * 图片ID
+     */
+    @TableField("IMAGE_ID")
+    private String imageId;
+
+    /**
      * 图片标题
      */
     @TableField("IMAGE_TITLE")
     private String imageTitle;
 
     /**
-     * 图片地址
-     */
-    @TableField("IMAGE_URL")
-    private String url;
-
-    /**
      * 图片分类
      */
-    @TableField("CATEGORY")
+    @TableField("IMAGE_CATEGORY")
     private String category;
 
     /**
-     * 横屏/竖屏
+     * 图片表述
      */
-    @TableField("ORIENTATION")
-    private String orientation;
+    @TableField("IMAGE_DESCRIPTION")
+    private String description;
+
+    /**
+     * 小图地址
+     */
+    @TableField("SMALL_IMAGE_URL")
+    private String smallImageUrl;
+
+    /**
+     * 大图地址
+     */
+    @TableField("BIG_IMAGE_URL")
+    private String bigImageUrl;
+
+    /**
+     * 图片爬取时间
+     */
+    @TableField("CREATE_TIME")
+    private String createTime;
 }

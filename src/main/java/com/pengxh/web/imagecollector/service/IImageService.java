@@ -17,9 +17,17 @@ public interface IImageService extends IService<ImageModel> {
     void saveImage();
 
     /**
+     * 搜索图片
+     *
+     * @param keywords 搜索关键字
+     * @return {@link ImageDTO}
+     */
+    ImageDTO searchImage(String keywords);
+
+    /**
      * 图片列表
      *
-     * @return List<ImageDTO>
+     * @return {@link List<ImageDTO>}
      */
     List<ImageDTO> selectImageList();
 }

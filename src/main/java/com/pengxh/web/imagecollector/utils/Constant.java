@@ -1,9 +1,23 @@
-package com.pengxh.web.imagecollector.constant;
+package com.pengxh.web.imagecollector.utils;
 
 /**
- * @author a203
+ * @author Administrator
  */
-public class UA {
+public class Constant {
+
+    /**
+     * 手机壁纸目标地址
+     */
+    private static final String MOBILE_TARGET_URL = "http://sj.bizhi360.com/";
+    /**
+     * 电脑壁纸目标地址
+     */
+    private static final String COMPUTER_TARGET_URL = "https://bing.ioliu.cn/";
+    /**
+     * 图片检索地址
+     */
+    private static final String SEARCH_URL = "";
+
     public static final String[] USER_AGENT = {"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36 Edg/81.0.416.53",
             "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.100 Safari/537.36",
             "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:46.0) Gecko/20100101 Firefox/46.0",

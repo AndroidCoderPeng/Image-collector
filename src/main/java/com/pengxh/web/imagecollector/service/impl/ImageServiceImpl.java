@@ -1,11 +1,11 @@
 package com.pengxh.web.imagecollector.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pengxh.web.imagecollector.constant.UA;
 import com.pengxh.web.imagecollector.dao.ImageMapper;
 import com.pengxh.web.imagecollector.dto.ImageDTO;
 import com.pengxh.web.imagecollector.model.ImageModel;
 import com.pengxh.web.imagecollector.service.IImageService;
+import com.pengxh.web.imagecollector.utils.Constant;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,18 +23,20 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageModel> imple
     }
 
     private String obtainAgent() {
-        return UA.USER_AGENT[new Random().nextInt(15)];
+        return Constant.USER_AGENT[new Random().nextInt(15)];
     }
 
     @Override
     public void saveImage() {
         //爬虫抓取数据
         ImageModel image = new ImageModel();
-        image.setImageTitle("测试数据库连接");
-        image.setUrl("https://www.php.cn/tool/navicat/427721.html");
-        image.setCategory("手机壁纸");
-        image.setOrientation("1");
         save(image);
+    }
+
+    @Override
+    public ImageDTO searchImage(String keywords) {
+
+        return null;
     }
 
     @Override

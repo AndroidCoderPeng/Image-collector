@@ -25,6 +25,16 @@ public class ImageController extends BaseController {
     }
 
     /**
+     * 模糊检索图片
+     */
+    @GetMapping(value = "/search")
+    @ResponseBody
+    public Object search(String keywords) {
+        ImageDTO imageDTO = imageService.searchImage(keywords);
+        return ResponseData.success(imageDTO);
+    }
+
+    /**
      * 数据列表
      */
     @GetMapping(value = "/list")

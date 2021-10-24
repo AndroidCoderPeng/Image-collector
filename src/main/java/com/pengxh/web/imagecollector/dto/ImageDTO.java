@@ -8,15 +8,21 @@ import lombok.Data;
  */
 @Data
 public class ImageDTO {
+    private String imageId;
     private String imageTitle;
-    private String url;
     private String category;
-    private String orientation;
+    private String description;
+    private String smallImageUrl;
+    private String bigImageUrl;
+    private String creatTime;
 
     public ImageDTO(ImageModel model) {
+        this.imageId = model.getImageId();
         this.imageTitle = model.getImageTitle();
-        this.url = model.getUrl();
         this.category = model.getCategory();
-        this.orientation = model.getOrientation();
+        this.description = model.getDescription();
+        this.smallImageUrl = model.getSmallImageUrl();
+        this.bigImageUrl = model.getBigImageUrl();
+        this.creatTime = model.getCreateTime();
     }
 }
