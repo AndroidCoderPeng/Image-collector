@@ -7,6 +7,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
@@ -51,9 +52,10 @@ public class BootNettyServer {
                 @Override
                 protected void initChannel(SocketChannel socketChannel) throws Exception {
                     ChannelPipeline pipeline = socketChannel.pipeline();
-
+                    //接收消息格式-byte[]
+                    pipeline.addLast("decoder", new ByteArrayDecoder());
+                    //发送消息格式-String
                     pipeline.addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
-                    pipeline.addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
                     /**
                      * 自定义ChannelInboundHandlerAdapter
                      */

@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 /**
  * @author a203
  */
@@ -25,8 +27,8 @@ public class SocketServiceImpl implements ISocketService {
      */
     @Override
     public void communicate(ChannelHandlerContext ctx, Object msg) {
-        String temp = msg.toString();
-        log.info("channelRead message ===> " + temp);
+        byte[] data = (byte[]) msg;
+        log.info("channelRead message ===> " + Arrays.toString(data));
         /**
          * 先解析再回应
          * */
