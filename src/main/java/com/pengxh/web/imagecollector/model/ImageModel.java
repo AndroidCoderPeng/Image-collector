@@ -17,11 +17,9 @@ public class ImageModel extends Model<ImageModel> {
 
     /**
      * 数据库主键
-     * <p>
-     * type = IdType.AUTO 是数据库自增
      */
-    @TableId(value = "ID", type = IdType.AUTO)
-    private Integer id;
+    @TableId(value = "ID", type = IdType.ASSIGN_ID)
+    private Long id;
 
     /**
      * 图片ID
