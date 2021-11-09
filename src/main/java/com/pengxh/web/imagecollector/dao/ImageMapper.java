@@ -16,8 +16,7 @@ public interface ImageMapper extends BaseMapper<ImageModel> {
      * 图片分页列表
      *
      * @param page 分页
-     * @return List<ImageDTO>
+     * @return {@link List<ImageModel>}
      */
-    List<ImageModel> selectImageListPage(
-            @Param("page") Page<ImageDTO> page);
+    List<ImageModel> selectImageListPage(@Param("page") Page<ImageDTO> page);
 }

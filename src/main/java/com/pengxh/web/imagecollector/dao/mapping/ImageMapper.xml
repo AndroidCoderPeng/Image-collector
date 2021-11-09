@@ -6,5 +6,23 @@
 
 
     <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID AS id,
+        IMAGE_ID AS imageId,
+        IMAGE_TITLE AS title,
+        IMAGE_CATEGORY AS category,
+        IMAGE_DESCRIPTION AS `description`,
+        SMALL_IMAGE_URL AS smallImageUrl,
+        BIG_IMAGE_URL AS bigImageUrl,
+        CREATE_TIME AS createTime
+    </sql>
 
+    <!--分页查询，不分页不用Page-->
+    <select id="selectImageListPage" resultType="com.pengxh.web.imagecollector.model.ImageModel"
+            parameterType="com.baomidou.mybatisplus.extension.plugins.pagination.Page">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM image_info AS ii
+        ORDER BY ii.CREATE_TIME
+    </select>
 </mapper>
