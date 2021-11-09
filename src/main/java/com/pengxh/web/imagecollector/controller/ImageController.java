@@ -69,7 +69,7 @@ public class ImageController extends BaseController {
     }
 
     /**
-     * 图片列表
+     * 图片分页列表---暂时有问题，会报500
      */
     @GetMapping(value = "/listPage")
     @ResponseBody

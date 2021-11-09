@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class ImageDTO {
-    private String imageId;
+    private Long imageId;
     private String imageTitle;
     private String category;
     private String description;

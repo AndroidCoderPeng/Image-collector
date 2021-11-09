@@ -1,6 +1,7 @@
 package com.pengxh.web.imagecollector.service.impl;
 
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,6 +35,7 @@ public class ImageServiceImpl extends ServiceImpl<ImageMapper, ImageModel> imple
     public void saveImage() {
         //爬虫抓取数据
         ImageModel image = new ImageModel();
+        image.setImageId(IdUtil.getSnowflake().nextId());
         save(image);
     }
 

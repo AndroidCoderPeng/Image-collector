@@ -25,7 +25,7 @@ public class ImageModel extends Model<ImageModel> {
      * 图片ID
      */
     @TableField("IMAGE_ID")
-    private String imageId;
+    private Long imageId;
 
     /**
      * 图片标题
