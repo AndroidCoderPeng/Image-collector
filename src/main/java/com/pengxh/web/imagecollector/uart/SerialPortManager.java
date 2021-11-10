@@ -20,7 +20,7 @@ public class SerialPortManager {
      * @param order      待发送数据
      */
     public static void sendToPort(NRSerialPort serialPort, byte[] order) {
-        log.info("往串口发送数据 ===> " + Arrays.toString(order));
+        log.info("串口发送数据 ===> " + Arrays.toString(order));
         DataOutputStream outs = null;
         try {
             outs = new DataOutputStream(serialPort.getOutputStream());

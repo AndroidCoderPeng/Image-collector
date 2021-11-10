@@ -44,7 +44,7 @@ public class SocketServiceImpl implements ISocketService {
                         }
                         if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
                             byte[] data = SerialPortManager.readFromPort(serialPort);
-                            log.info("收到数据===>" + Arrays.toString(data));
+                            log.info("串口收到数据 ===> " + Arrays.toString(data));
                             analyzeData(data);
                         } else {
                             log.info("串口状态异常");
@@ -63,8 +63,33 @@ public class SocketServiceImpl implements ISocketService {
 
     private void analyzeData(byte[] data) {
         if (-91 == data[0] && 90 == data[1]) {
-            String hexString = BytesUtil.bytesToHexString(data);
-            log.info("卫星通信返回值 ===> " + hexString);
+            int[] unsignedData = BytesUtil.bytesToUnsigned(data);
+            log.info("卫星通信返回值 ===> " + Arrays.toString(unsignedData));
+            int type = unsignedData[3];
+            switch (type) {
+                case 0x01:
+                    //读取北斗/GPS位置信息
+
+                    break;
+                case 0x02:
+                    //数据接收
+
+                    break;
+                case 0x03:
+                    //数据发送成功
+
+                    break;
+                case 0x04:
+                    //数据发送失败
+
+                    break;
+                case 0x05:
+                    //当前天通信号强度
+
+                    break;
+                default:
+                    break;
+            }
         } else {
             String value = new String(data);
             if (value.startsWith("SN=")) {
