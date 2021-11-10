@@ -1,9 +1,9 @@
 package com.pengxh.web.imagecollector.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.pengxh.web.imagecollector.service.ISocketService;
 import com.pengxh.web.imagecollector.uart.CommandManager;
 import com.pengxh.web.imagecollector.uart.SerialPortManager;
+import com.pengxh.web.imagecollector.utils.BytesUtil;
 import com.pengxh.web.imagecollector.utils.Constant;
 import gnu.io.NRSerialPort;
 import gnu.io.SerialPortEvent;
@@ -11,7 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TooManyListenersException;
@@ -29,18 +28,24 @@ public class SocketServiceImpl implements ISocketService {
         //初始化串口
         Set<String> allPorts = NRSerialPort.getAvailableSerialPorts();
         if (!allPorts.isEmpty()) {
-            //["/dev/tty.usbserial-1120","/dev/tty.wlan-debug"]
-            if (allPorts.contains(Constant.USB_SERIAL)) {
-                serialPort = new NRSerialPort(Constant.USB_SERIAL, Constant.BAUD_RATE);
+            if (allPorts.contains(Constant.USB_CLIENT_SERIAL)) {
+                serialPort = new NRSerialPort(Constant.USB_CLIENT_SERIAL, Constant.BAUD_RATE);
                 serialPort.connect();
                 //登录指挥机
-                byte[] loginCmd = CommandManager.createLoginCmd("^$CC0Z06,11,LOGIN,d, D$^");
+                byte[] loginCmd = CommandManager.createLoginCmd("^$TT0Z06,11,LOGIN,d, D$^");
                 SerialPortManager.sendToPort(serialPort, loginCmd);
                 try {
                     serialPort.addEventListener(serialPortEvent -> {
+                        // 解决数据断行
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-                            String data = SerialPortManager.readFromPort(serialPort);
-                            log.info("读取到数据===>" + data);
+                            byte[] data = SerialPortManager.readFromPort(serialPort);
+                            log.info("收到数据===>" + Arrays.toString(data));
+                            analyzeData(data);
                         } else {
                             log.info("串口状态异常");
                             serialPort.removeEventListener();
@@ -56,6 +61,22 @@ public class SocketServiceImpl implements ISocketService {
         }
     }
 
+    private void analyzeData(byte[] data) {
+        if (-91 == data[0] && 90 == data[1]) {
+            String hexString = BytesUtil.bytesToHexString(data);
+            log.info("卫星通信返回值 ===> " + hexString);
+        } else {
+            String value = new String(data);
+            if (value.startsWith("SN=")) {
+                log.info("天通设备信息 ===> " + value);
+            } else if (value.contains("GPS,V")) {
+                log.info("天通北斗终端定位无信号，请找空旷位置再试");
+            } else {
+                log.info("其他指令返回值 ===> " + value);
+            }
+        }
+    }
+
     /**
      * Socket数据通信接口
      *
@@ -65,34 +86,15 @@ public class SocketServiceImpl implements ISocketService {
     @Override
     public void communicate(ChannelHandlerContext ctx, Object msg) {
         byte[] data = (byte[]) msg;
-        log.info("channelRead message ===> " + Arrays.toString(data));
         /**
          * 先解析再回应
          * */
-        if (isCorrectData(data)) {
-            int dataType = data[2];
-            switch (dataType) {
-                case 0x01:
-                case 0x04:
-                    /**
-                     * 数据加密之后再与卫星通信
-                     * */
-                    String test = "*RN";
-                    if (serialPort.isConnected()) {
-                        SerialPortManager.sendToPort(serialPort, test.getBytes(StandardCharsets.UTF_8));
-                    }
-                    break;
-                default:
-                    break;
-            }
-            ctx.writeAndFlush(JSON.toJSONString("服务器已收到消息"));
+        /**
+         * 数据加密之后再与卫星通信
+         * */
+        if (serialPort.isConnected()) {
+            SerialPortManager.sendToPort(serialPort, data);
         }
-    }
-
-    private boolean isCorrectData(byte[] bytes) {
-        if (bytes[0] != Constant.BITS_OF_HEAD) {
-            return false;
-        }
-        return bytes[bytes.length - 1] == Constant.BITS_OF_END;
+        ctx.writeAndFlush("服务器已收到消息");
     }
 }

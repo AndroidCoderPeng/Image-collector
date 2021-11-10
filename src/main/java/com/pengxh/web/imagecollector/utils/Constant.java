@@ -4,13 +4,16 @@ package com.pengxh.web.imagecollector.utils;
  * @author Administrator
  */
 public class Constant {
-
-    public static final byte BITS_OF_HEAD = (byte) 0x2A;
-    public static final byte BITS_OF_END = (byte) 0x0A;
-
     public static final int BAUD_RATE = 115200;
 
-    public static final String USB_SERIAL = "/dev/tty.usbserial-1120";
+    /**
+     * 天通客户端串口名
+     * */
+    public static final String USB_CLIENT_SERIAL = "/dev/tty.usbserial-FTAQ6T45";
+    /**
+     * 天通指挥机串口名
+     * */
+    public static final String USB_SERVER_SERIAL = "/dev/tty.usbserial-1120";
 
     /**
      * 手机壁纸目标地址
