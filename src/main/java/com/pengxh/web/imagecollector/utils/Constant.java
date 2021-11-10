@@ -5,6 +5,13 @@ package com.pengxh.web.imagecollector.utils;
  */
 public class Constant {
 
+    public static final byte BITS_OF_HEAD = (byte) 0x2A;
+    public static final byte BITS_OF_END = (byte) 0x0A;
+
+    public static final int BAUD_RATE = 115200;
+
+    public static final String USB_SERIAL = "/dev/tty.usbserial-1120";
+
     /**
      * 手机壁纸目标地址
      */
