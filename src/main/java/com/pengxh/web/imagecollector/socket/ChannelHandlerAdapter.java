@@ -41,6 +41,7 @@ public class ChannelHandlerAdapter extends ChannelInboundHandlerAdapter {
         ctx.channel().read();
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String ip = socketAddress.getAddress().getHostAddress();
+        socketService.onSocketConnected();
         log.info("channelActive ===> " + ip);
     }
 
@@ -49,6 +50,7 @@ public class ChannelHandlerAdapter extends ChannelInboundHandlerAdapter {
         super.channelInactive(ctx);
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String ip = socketAddress.getAddress().getHostAddress();
+        socketService.onSocketDisconnect();
         log.info("channelInactive ===> " + ip);
         ctx.close(); //断开连接时，必须关闭，否则造成资源浪费，并发量很大情况下可能造成宕机
     }

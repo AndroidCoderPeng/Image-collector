@@ -6,13 +6,37 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author a203
  */
 @Slf4j
 public class SerialPortManager {
+    private static final List<byte[]> CMD = Arrays.asList(
+            /*设置天天通北斗终端天线工作模式*/
+            CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8),
+            /*设置短信发送目的地的号码数量*/
+            CommandManager.createTargetNumberCmd(new String[]{"8617400542542", "8618765997865"}),
+            /*设置短信中心号码SCA*/
+            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8)
+    );
+
+    public static void setupSerialPortConfig(NRSerialPort serialPort) {
+        int index = 0;
+        while (index < CMD.size()) {
+            SerialPortManager.sendToPort(serialPort, CMD.get(index));
+            try {
+                index++;
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * 往串口发送数据
      *

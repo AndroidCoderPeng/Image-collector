@@ -13,4 +13,14 @@ public interface ISocketService {
      * @param msg 读取到的数据
      */
     void communicate(ChannelHandlerContext ctx, Object msg);
+
+    /**
+     * Socket连接
+     */
+    void onSocketConnected();
+
+    /**
+     * Socket断开
+     */
+    void onSocketDisconnect();
 }

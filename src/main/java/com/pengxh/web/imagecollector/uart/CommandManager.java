@@ -8,7 +8,26 @@ import java.nio.charset.StandardCharsets;
  * @author a203
  */
 public class CommandManager {
+    public static final String CMD_WORK_MODE = "*W:DEV:S";
+    public static final String CMD_CENTER_NUMBER = "*W:SCA:8617400010200";
+
     private static final String CMD_HEADER = "*AT^IOTDATA=";
+
+    /**
+     * 设置短信发送目的地的号码数量
+     */
+    public static byte[] createTargetNumberCmd(String[] numbers) {
+        //*W:TPA:2,8617419290107,861771542345
+        StringBuilder cmd = new StringBuilder("*W:TPA:" + numbers.length + ",");
+        for (int i = 0; i < numbers.length; i++) {
+            if (i != numbers.length - 1) {
+                cmd.append(numbers[i]).append(",");
+            } else {
+                cmd.append(numbers[i]);
+            }
+        }
+        return cmd.toString().getBytes(StandardCharsets.UTF_8);
+    }
 
     /**
      * *AT^IOTDATA=21,"^$CC1,11,LOGIN,d, D$^"

@@ -1,7 +1,6 @@
 package com.pengxh.web.imagecollector.service.impl;
 
 import com.pengxh.web.imagecollector.service.ISocketService;
-import com.pengxh.web.imagecollector.uart.CommandManager;
 import com.pengxh.web.imagecollector.uart.SerialPortManager;
 import com.pengxh.web.imagecollector.utils.BytesUtil;
 import com.pengxh.web.imagecollector.utils.Constant;
@@ -25,15 +24,17 @@ public class SocketServiceImpl implements ISocketService {
     private NRSerialPort serialPort;
 
     public SocketServiceImpl() {
+
+    }
+
+    @Override
+    public void onSocketConnected() {
         //初始化串口
         Set<String> allPorts = NRSerialPort.getAvailableSerialPorts();
         if (!allPorts.isEmpty()) {
             if (allPorts.contains(Constant.USB_CLIENT_SERIAL)) {
                 serialPort = new NRSerialPort(Constant.USB_CLIENT_SERIAL, Constant.BAUD_RATE);
                 serialPort.connect();
-                //登录指挥机
-                byte[] loginCmd = CommandManager.createLoginCmd("^$TT0Z06,11,LOGIN,d, D$^");
-                SerialPortManager.sendToPort(serialPort, loginCmd);
                 try {
                     serialPort.addEventListener(serialPortEvent -> {
                         // 解决数据断行
@@ -43,9 +44,7 @@ public class SocketServiceImpl implements ISocketService {
                             e.printStackTrace();
                         }
                         if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-                            byte[] data = SerialPortManager.readFromPort(serialPort);
-                            log.info("串口收到数据 ===> " + Arrays.toString(data));
-                            analyzeData(data);
+                            analyzeData(SerialPortManager.readFromPort(serialPort));
                         } else {
                             log.info("串口状态异常");
                             serialPort.removeEventListener();
@@ -55,9 +54,17 @@ public class SocketServiceImpl implements ISocketService {
                 } catch (TooManyListenersException e) {
                     e.printStackTrace();
                 }
+                SerialPortManager.setupSerialPortConfig(serialPort);
             } else {
                 log.info("无可用串口");
             }
+        }
+    }
+
+    @Override
+    public void onSocketDisconnect() {
+        if (serialPort != null) {
+            serialPort.disconnect();
         }
     }
 
