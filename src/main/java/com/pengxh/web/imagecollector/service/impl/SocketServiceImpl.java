@@ -117,7 +117,7 @@ public class SocketServiceImpl implements ISocketService {
         /**
          * 数据加密之后再与卫星通信
          * */
-        if (serialPort.isConnected()) {
+        if (serialPort != null && serialPort.isConnected()) {
             SerialPortManager.sendToPort(serialPort, data);
         }
         ctx.writeAndFlush("服务器已收到消息");

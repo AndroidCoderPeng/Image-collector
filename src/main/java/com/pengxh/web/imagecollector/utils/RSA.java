@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * RSA公钥/私钥/签名工具包
+ * RSA加解密
  *
  * @author a203
  */
-public class RSAUtils {
+public class RSA {
 
     public static String RSAPrivateKey = "RSAPrivateKey";
     public static String RSAPublicKey = "RSAPublicKey";
