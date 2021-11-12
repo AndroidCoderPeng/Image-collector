@@ -1,17 +1,22 @@
 package com.pengxh.web.imagecollector.uart;
 
+import com.pengxh.web.imagecollector.utils.BytesUtil;
+import com.pengxh.web.imagecollector.utils.TEA;
+import lombok.extern.slf4j.Slf4j;
+
 import java.nio.charset.StandardCharsets;
 
 /**
- * 指令拼接
- *
  * @author a203
  */
+@Slf4j
 public class CommandManager {
+    public static final String CMD_CLOSE_DEBUG = "*XF,DEBUG=0";
+    public static final String CMD_DTU_MODE = "*XF,MODE=1,#";
     public static final String CMD_WORK_MODE = "*W:DEV:S";
     public static final String CMD_CENTER_NUMBER = "*W:SCA:8617400010200";
-
-    private static final String CMD_HEADER = "*AT^IOTDATA=";
+    public static final String CMD_CLIENT_NUMBER = "*W:SN:TT0Z07";
+    public static final String CMD_SERVER_NUMBER = "*W:SN:CC0Z06";
 
     /**
      * 设置短信发送目的地的号码数量
@@ -30,15 +35,18 @@ public class CommandManager {
     }
 
     /**
-     * *AT^IOTDATA=21,"^$CC1,11,LOGIN,d, D$^"
-     * <p>
-     * 21是双引号中间的数据长度，CC1指挥中心名称，11是指挥中心密码，d+逗号+空格+D
-     * <p>
-     * 登录指令和发送数据指令之间，需要间隔500ms以上
+     * &M# 天通北斗终端将视M为数据内容，将数据内容通过SMS或DTU发送给远端
+     * 发送成功通过串口返回SENDDATA,OK（帧格式） ，发送未成功返回SENDDATA,ERR（帧格式）
      */
-    public static byte[] createLoginCmd(String data) {
-        String cmd = CMD_HEADER + data.length() + "," + "\"" + data + "\"";
+    public static byte[] createMessageCmd(String data) {
+        byte[] smsBytes = data.getBytes(StandardCharsets.UTF_8);
+        byte[] encrypt = TEA.encrypt(smsBytes);
+        StringBuilder builder = new StringBuilder();
+        for (int b : BytesUtil.bytesToUnsigned(encrypt)) {
+            builder.append(Integer.toString(b, 16));
+        }
+        String cmd = "&" + builder + "#";
+        log.info(cmd);
         return cmd.getBytes(StandardCharsets.UTF_8);
     }
 }
-

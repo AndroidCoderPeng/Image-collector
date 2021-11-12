@@ -15,19 +15,46 @@ import java.util.List;
  */
 @Slf4j
 public class SerialPortManager {
-    private static final List<byte[]> CMD = Arrays.asList(
-            /*设置天天通北斗终端天线工作模式*/
+    /**
+     * 客户端参数设置指令
+     */
+    public static final List<byte[]> CLIENT_CMD = Arrays.asList(
+            /*设置天通关闭Debug模式*/
+            CommandManager.CMD_CLOSE_DEBUG.getBytes(StandardCharsets.UTF_8),
+            /*设置天通连续快速传输模式*/
+            CommandManager.CMD_DTU_MODE.getBytes(StandardCharsets.UTF_8),
+            /*设置天通终端天线工作模式*/
             CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8),
             /*设置短信发送目的地的号码数量*/
             CommandManager.createTargetNumberCmd(new String[]{"8617400542542", "8618765997865"}),
             /*设置短信中心号码SCA*/
-            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8)
+            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8),
+            /*设置终端号码*/
+            CommandManager.CMD_CLIENT_NUMBER.getBytes(StandardCharsets.UTF_8)
     );
 
-    public static void setupSerialPortConfig(NRSerialPort serialPort) {
+    /**
+     * 指挥机参数设置指令
+     */
+    public static final List<byte[]> SERVER_CMD = Arrays.asList(
+            /*设置天通关闭Debug模式*/
+            CommandManager.CMD_CLOSE_DEBUG.getBytes(StandardCharsets.UTF_8),
+            /*设置天通连续快速传输模式*/
+            CommandManager.CMD_DTU_MODE.getBytes(StandardCharsets.UTF_8),
+            /*设置天通指挥机天线工作模式*/
+            CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8),
+            /*设置短信发送目的地的号码数量*/
+            CommandManager.createTargetNumberCmd(new String[]{"8617400542542", "8618765997865"}),
+            /*设置短信中心号码SCA*/
+            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8),
+            /*设置指挥机号码*/
+            CommandManager.CMD_SERVER_NUMBER.getBytes(StandardCharsets.UTF_8)
+    );
+
+    public static void setupSerialPortConfig(NRSerialPort serialPort, List<byte[]> cmd) {
         int index = 0;
-        while (index < CMD.size()) {
-            SerialPortManager.sendToPort(serialPort, CMD.get(index));
+        while (index < cmd.size()) {
+            SerialPortManager.sendToPort(serialPort, cmd.get(index));
             try {
                 index++;
                 Thread.sleep(500);

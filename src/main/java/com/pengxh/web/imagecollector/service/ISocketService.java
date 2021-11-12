@@ -16,8 +16,10 @@ public interface ISocketService {
 
     /**
      * Socket连接
+     *
+     * @param ctx 通道上下文
      */
-    void onSocketConnected();
+    void onSocketConnected(ChannelHandlerContext ctx);
 
     /**
      * Socket断开

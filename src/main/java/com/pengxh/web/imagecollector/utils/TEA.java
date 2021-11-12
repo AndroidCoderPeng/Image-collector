@@ -2,8 +2,6 @@ package com.pengxh.web.imagecollector.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * TEA加解密
  *
@@ -14,9 +12,13 @@ public class TEA {
 
     private static final int EIGENVALUES = 0x9E3779B9;
 
-    public static byte[] encrypt(String content, long[] key) {
-        byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
-        long k0 = key[0], k1 = key[1], k2 = key[2], k3 = key[3];
+    public static final long[] KEY = {
+            (long) 0x789F5645, (long) 0xF68BD5A4,
+            (long) 0x81963FFA, (long) 0x458FAC58
+    };
+
+    public static byte[] encrypt(byte[] contentBytes) {
+        long k0 = KEY[0], k1 = KEY[1], k2 = KEY[2], k3 = KEY[3];
         byte left = contentBytes[0], right = contentBytes[1];
         //加密次数
         int times = 32;
@@ -31,17 +33,17 @@ public class TEA {
         return contentBytes;
     }
 
-    public static byte[] decrypt(byte[] v, long[] key) {
-        byte y = v[0], z = v[1];
+    public static byte[] decrypt(byte[] encryptBytes) {
+        byte y = encryptBytes[0], z = encryptBytes[1];
         int sum = 0xC6EF3720, i;
-        long k0 = key[0], k1 = key[1], k2 = key[2], k3 = key[3];
+        long k0 = KEY[0], k1 = KEY[1], k2 = KEY[2], k3 = KEY[3];
         for (i = 0; i < 32; i++) {
             z -= ((y << 4) + k2) ^ (y + sum) ^ ((y >> 5) + k3);
             y -= ((z << 4) + k0) ^ (z + sum) ^ ((z >> 5) + k1);
             sum -= EIGENVALUES;
         }
-        v[0] = y;
-        v[1] = z;
-        return v;
+        encryptBytes[0] = y;
+        encryptBytes[1] = z;
+        return encryptBytes;
     }
 }

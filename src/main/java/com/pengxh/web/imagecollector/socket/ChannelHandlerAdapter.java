@@ -41,7 +41,7 @@ public class ChannelHandlerAdapter extends ChannelInboundHandlerAdapter {
         ctx.channel().read();
         InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         String ip = socketAddress.getAddress().getHostAddress();
-        socketService.onSocketConnected();
+        socketService.onSocketConnected(ctx);
         log.info("channelActive ===> " + ip);
     }
 
