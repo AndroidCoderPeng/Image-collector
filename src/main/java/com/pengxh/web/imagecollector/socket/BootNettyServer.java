@@ -10,12 +10,18 @@ import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Administrator
  */
 @Slf4j
+@Service
 public class BootNettyServer {
+
+    @Value("${socket.port}")
+    private Integer port;
 
     private final ISocketService socketService;
 
@@ -23,7 +29,7 @@ public class BootNettyServer {
         this.socketService = socketService;
     }
 
-    public void bind(int port) {
+    public void bind() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -60,7 +66,7 @@ public class BootNettyServer {
                             pipeline.addLast(new ChannelHandlerAdapter(socketService));
                         }
                     });
-            log.info("端口已开启，占用" + port + "端口号....");
+            log.info("Socket port has open, and Port:" + port + " has been occupied....");
             /**
              * 绑定端口，同步等待成功
              */

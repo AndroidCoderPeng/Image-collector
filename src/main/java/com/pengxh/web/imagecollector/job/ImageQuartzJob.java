@@ -20,6 +20,6 @@ public class ImageQuartzJob {
 
     @Scheduled(cron = "0/10 * *  * * ? ")
     public void execute() {
-//        imageService.saveImage();
+        imageService.saveImage();
     }
 }
