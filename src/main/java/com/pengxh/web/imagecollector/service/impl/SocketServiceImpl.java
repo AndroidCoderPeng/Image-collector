@@ -29,43 +29,43 @@ public class SocketServiceImpl implements ISocketService {
     /**
      * 硬件端口名
      */
-    @Value("${casic.serialPort.name}")
+    @Value("${serialPort.name}")
     private String serialPortName;
 
     /**
      * 指挥机还是客户终端
      */
-    @Value("${casic.serialPort.isClient}")
+    @Value("${serialPort.isClient}")
     private boolean isClient;
 
     /**
      * 指挥机帐号
      */
-    @Value("${casic.serialPort.serverAccount}")
+    @Value("${serialPort.serverAccount}")
     private String serverAccount;
 
     /**
      * 指挥机帐号
      */
-    @Value("${casic.serialPort.serverPassword}")
+    @Value("${serialPort.serverPassword}")
     private String serverPassword;
 
     /**
      * 客户端帐号
      */
-    @Value("${casic.serialPort.clientAccount}")
+    @Value("${serialPort.clientAccount}")
     private String clientAccount;
 
     /**
      * 指挥机目标号码
      */
-    @Value("${casic.serialPort.serverTarget}")
+    @Value("${serialPort.serverTarget}")
     private String serverTarget;
 
     /**
      * 客户端目标号码
      */
-    @Value("${casic.serialPort.clientTarget}")
+    @Value("${serialPort.clientTarget}")
     private String clientTarget;
 
     private NRSerialPort serialPort;

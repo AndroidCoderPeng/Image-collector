@@ -137,6 +137,13 @@
             <artifactId>nrjavaserial</artifactId>
             <version>5.1.1</version>
         </dependency>
+
+        <!-- 远程操作Linux服务器 -->
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId>
+            <artifactId>ganymed-ssh2</artifactId>
+            <version>262</version>
+        </dependency>
     </dependencies>
 
     <build>

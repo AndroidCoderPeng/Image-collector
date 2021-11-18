@@ -17,4 +17,16 @@ public class StringHelper {
         log.info("targetNumber ===> " + Arrays.toString(targetNumber));
         return targetNumber;
     }
+
+    public static boolean isNumber(String target) {
+        if ("".equals(target) || null == target) {
+            return false;
+        }
+        for (char c : target.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package com.pengxh.web.imagecollector.job;
 
 import com.pengxh.web.imagecollector.service.IImageService;
+import com.pengxh.web.imagecollector.service.ISystemService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +14,16 @@ import org.springframework.stereotype.Component;
 public class ImageQuartzJob {
 
     private final IImageService imageService;
+    private final ISystemService systemService;
 
-    public ImageQuartzJob(IImageService imageService) {
+    public ImageQuartzJob(IImageService imageService, ISystemService systemService) {
         this.imageService = imageService;
+        this.systemService = systemService;
     }
 
     @Scheduled(cron = "0/10 * *  * * ? ")
     public void execute() {
-        imageService.saveImage();
+//        imageService.saveImage();
+        systemService.obtainLinuxServerInfo();
     }
 }
