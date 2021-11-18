@@ -1,14 +1,17 @@
 package com.pengxh.web.imagecollector.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.pengxh.web.imagecollector.service.ISocketService;
 import com.pengxh.web.imagecollector.uart.CommandManager;
 import com.pengxh.web.imagecollector.uart.SerialPortManager;
 import com.pengxh.web.imagecollector.utils.BytesUtil;
 import com.pengxh.web.imagecollector.utils.Constant;
+import com.pengxh.web.imagecollector.utils.StringHelper;
 import gnu.io.NRSerialPort;
 import gnu.io.SerialPortEvent;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -23,6 +26,48 @@ import java.util.TooManyListenersException;
 @Service
 public class SocketServiceImpl implements ISocketService {
 
+    /**
+     * 硬件端口名
+     */
+    @Value("${casic.serialPort.name}")
+    private String serialPortName;
+
+    /**
+     * 指挥机还是客户终端
+     */
+    @Value("${casic.serialPort.isClient}")
+    private boolean isClient;
+
+    /**
+     * 指挥机帐号
+     */
+    @Value("${casic.serialPort.serverAccount}")
+    private String serverAccount;
+
+    /**
+     * 指挥机帐号
+     */
+    @Value("${casic.serialPort.serverPassword}")
+    private String serverPassword;
+
+    /**
+     * 客户端帐号
+     */
+    @Value("${casic.serialPort.clientAccount}")
+    private String clientAccount;
+
+    /**
+     * 指挥机目标号码
+     */
+    @Value("${casic.serialPort.serverTarget}")
+    private String serverTarget;
+
+    /**
+     * 客户端目标号码
+     */
+    @Value("${casic.serialPort.clientTarget}")
+    private String clientTarget;
+
     private NRSerialPort serialPort;
     private ChannelHandlerContext channelHandler;
 
@@ -34,45 +79,48 @@ public class SocketServiceImpl implements ISocketService {
     public void onSocketConnected(ChannelHandlerContext ctx) {
         this.channelHandler = ctx;
         //初始化串口
+        //初始化串口
         Set<String> allPorts = NRSerialPort.getAvailableSerialPorts();
+        log.info("Available port as follows " + JSON.toJSONString(allPorts));
         if (!allPorts.isEmpty()) {
-            boolean isClient;
-            if (allPorts.contains(Constant.USB_CLIENT_SERIAL)) {
-                isClient = true;
-                serialPort = new NRSerialPort(Constant.USB_CLIENT_SERIAL, Constant.BAUD_RATE);
-            } else if (allPorts.contains(Constant.USB_SERVER_SERIAL)) {
-                isClient = false;
-                serialPort = new NRSerialPort(Constant.USB_SERVER_SERIAL, Constant.BAUD_RATE);
-            } else {
-                isClient = false;
-                log.info("无可用串口");
-            }
-            if (serialPort != null) {
-                serialPort.connect();
-                try {
-                    serialPort.addEventListener(serialPortEvent -> {
-                        // 解决数据断行
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
-                            analyzeData(SerialPortManager.readFromPort(serialPort));
-                        } else {
-                            log.info("串口状态异常");
-                            serialPort.removeEventListener();
-                        }
-                        serialPort.notifyOnDataAvailable(true);
-                    });
-                } catch (TooManyListenersException e) {
-                    e.printStackTrace();
-                }
-                if (isClient) {
-                    SerialPortManager.setupSerialPortConfig(serialPort, SerialPortManager.CLIENT_CMD);
+            serialPort = new NRSerialPort(serialPortName, Constant.BAUD_RATE);
+            try {
+                if (serialPort.connect()) {
+                    try {
+                        serialPort.addEventListener(serialPortEvent -> {
+                            // 解决数据断行
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+                                analyzeData(SerialPortManager.readFromPort(serialPort));
+                            } else {
+                                log.info("The serial port status is abnormal");
+                                serialPort.removeEventListener();
+                            }
+                            serialPort.notifyOnDataAvailable(true);
+                        });
+                    } catch (TooManyListenersException e) {
+                        e.printStackTrace();
+                    }
+                    if (isClient) {
+                        SerialPortManager.setupSerialPortConfig(serialPort, true,
+                                StringHelper.formatTargetNumber(clientTarget),
+                                "", ""
+                        );
+                    } else {
+                        SerialPortManager.setupSerialPortConfig(serialPort, false,
+                                StringHelper.formatTargetNumber(serverTarget),
+                                serverAccount, serverPassword
+                        );
+                    }
                 } else {
-                    SerialPortManager.setupSerialPortConfig(serialPort, SerialPortManager.SERVER_CMD);
+                    sendToSocket("No Available TT Port");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -147,7 +195,13 @@ public class SocketServiceImpl implements ISocketService {
             /**
              * 数据加密之后再与卫星通信
              * */
-            bytes = CommandManager.createMessageCmd(decodeSMS);
+            if (isClient) {
+                bytes = CommandManager.createClientMessageCmd(decodeSMS);
+            } else {
+                bytes = CommandManager.createServerMessageCmd(
+                        decodeSMS, serverAccount, serverPassword, clientAccount
+                );
+            }
         }
         if (serialPort != null && serialPort.isConnected()) {
             SerialPortManager.sendToPort(serialPort, bytes);

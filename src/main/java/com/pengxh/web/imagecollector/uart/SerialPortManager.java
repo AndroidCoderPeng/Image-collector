@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -15,49 +16,35 @@ import java.util.List;
  */
 @Slf4j
 public class SerialPortManager {
-    /**
-     * 客户端参数设置指令
-     */
-    public static final List<byte[]> CLIENT_CMD = Arrays.asList(
-            /*设置天通关闭Debug模式*/
-            CommandManager.CMD_CLOSE_DEBUG.getBytes(StandardCharsets.UTF_8),
-            /*设置天通连续快速传输模式*/
-            CommandManager.CMD_DTU_MODE.getBytes(StandardCharsets.UTF_8),
-            /*设置天通终端天线工作模式*/
-            CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8),
-            /*设置短信发送目的地的号码数量*/
-            CommandManager.createTargetNumberCmd(new String[]{"8617400542542", "8618765997865"}),
-            /*设置短信中心号码SCA*/
-            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8),
+    public static void setupSerialPortConfig(NRSerialPort serialPort, boolean isClient, String[] targetNumbers, String serverName, String pwd) {
+        List<byte[]> cmd = new LinkedList<>();
+        /*设置天通指挥机天线工作模式*/
+        cmd.add(CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8));
+        /*设置天通关闭Debug模式*/
+        cmd.add(CommandManager.CMD_CLOSE_DEBUG.getBytes(StandardCharsets.UTF_8));
+        /*设置天通连续快速传输模式*/
+        cmd.add(CommandManager.CMD_DTU_MODE.getBytes(StandardCharsets.UTF_8));
+        /*设置短信发送目的地的号码数量*/
+        cmd.add(CommandManager.createTargetNumberCmd(targetNumbers));
+        /*设置短信中心号码SCA*/
+        cmd.add(CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8));
+        if (isClient) {
             /*设置终端号码*/
-            CommandManager.CMD_CLIENT_NUMBER.getBytes(StandardCharsets.UTF_8)
-    );
-
-    /**
-     * 指挥机参数设置指令
-     */
-    public static final List<byte[]> SERVER_CMD = Arrays.asList(
-            /*设置天通关闭Debug模式*/
-            CommandManager.CMD_CLOSE_DEBUG.getBytes(StandardCharsets.UTF_8),
-            /*设置天通连续快速传输模式*/
-            CommandManager.CMD_DTU_MODE.getBytes(StandardCharsets.UTF_8),
-            /*设置天通指挥机天线工作模式*/
-            CommandManager.CMD_WORK_MODE.getBytes(StandardCharsets.UTF_8),
-            /*设置短信发送目的地的号码数量*/
-            CommandManager.createTargetNumberCmd(new String[]{"8617400542542", "8618765997865"}),
-            /*设置短信中心号码SCA*/
-            CommandManager.CMD_CENTER_NUMBER.getBytes(StandardCharsets.UTF_8),
+            cmd.add(CommandManager.CMD_CLIENT_NUMBER.getBytes(StandardCharsets.UTF_8));
+        } else {
             /*设置指挥机号码*/
-            CommandManager.CMD_SERVER_NUMBER.getBytes(StandardCharsets.UTF_8)
-    );
+            cmd.add(CommandManager.CMD_SERVER_NUMBER.getBytes(StandardCharsets.UTF_8));
+            /*登录*/
+            cmd.add(CommandManager.createServerLoginCmd(serverName, pwd));
+        }
 
-    public static void setupSerialPortConfig(NRSerialPort serialPort, List<byte[]> cmd) {
+        //将参数配置发送给设备
         int index = 0;
         while (index < cmd.size()) {
-            SerialPortManager.sendToPort(serialPort, cmd.get(index));
+            sendToPort(serialPort, cmd.get(index));
             try {
                 index++;
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

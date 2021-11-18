@@ -10,3 +10,19 @@ spring:
 
 socket:
   port: 9091
+
+serialPort:
+  #天通串口名，Windows下以COM开头，Linux和MacOS下串口名如下所示
+  name: /dev/tty.usbserial-FTAQ6T45
+  #指挥机-false，滑翔机/客户端-true
+  isClient: true
+  #指挥机帐号
+  serverAccount: CC0Z06
+  #指挥机密码
+  serverPassword: 11
+  #滑翔机/客户端帐号
+  clientAccount: TT0Z07
+  #指挥机目标号码，最多五个（不包括自己），多个号码用逗号隔开，通信方向：指挥机------>滑翔机
+  serverTarget: 8618765997865
+  #客户端目标号码，最多五个（不包括自己），多个号码用逗号隔开，通信方向：滑翔机------>指挥机
+  clientTarget: 8617400542542
