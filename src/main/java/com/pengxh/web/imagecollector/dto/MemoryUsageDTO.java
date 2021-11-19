@@ -13,18 +13,18 @@ public class MemoryUsageDTO {
 
     @Data
     public static class Memory {
-        private String total;
-        private String used;
-        private String free;
-        private String shared;
-        private String cache;
-        private String available;
+        private Long total;
+        private Long used;
+        private Long free;
+        private Long shared;
+        private Long cache;
+        private Long available;
     }
 
     @Data
     public static class Swap {
-        private String total;
-        private String used;
-        private String free;
+        private Long total;
+        private Long used;
+        private Long free;
     }
 }

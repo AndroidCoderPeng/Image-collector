@@ -75,7 +75,7 @@ public class System {
             String[] split = result.split("\n");
 
             String memValue = split[1];
-            List<String> memData = formatValue(memValue.split(" "));
+            List<Long> memData = formatValue(memValue.split(" "));
             MemoryUsageDTO.Memory memory = new MemoryUsageDTO.Memory();
             memory.setTotal(memData.get(0));
             memory.setUsed(memData.get(1));
@@ -87,7 +87,7 @@ public class System {
             dto.setMemory(memory);
 
             String swapValue = split[2];
-            List<String> swapData = formatValue(swapValue.split(" "));
+            List<Long> swapData = formatValue(swapValue.split(" "));
             MemoryUsageDTO.Swap swap = new MemoryUsageDTO.Swap();
             swap.setTotal(swapData.get(0));
             swap.setUsed(swapData.get(1));
@@ -144,15 +144,15 @@ public class System {
 
             String taskValue = split[1];
             List<String> taskData = formatStringValue(taskValue.split(" "));
-            dto.setTaskCount(taskData.get(1));
+            dto.setTaskCount(Integer.valueOf(taskData.get(1)));
 
             String cpuValue = split[2];
             List<String> cpuData = formatStringValue(cpuValue.split(" "));
 
-            dto.setUserRatio(cpuData.get(1) + "%");
-            dto.setSystemRatio(cpuData.get(3) + "%");
-            dto.setNiceRatio(cpuData.get(5) + "%");
-            dto.setFreeRatio(cpuData.get(7) + "%");
+            dto.setUserRatio(Float.valueOf(cpuData.get(1)));
+            dto.setSystemRatio(Float.valueOf(cpuData.get(3)));
+            dto.setNiceRatio(Float.valueOf(cpuData.get(5)));
+            dto.setFreeRatio(Float.valueOf(cpuData.get(7)));
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -214,11 +214,11 @@ public class System {
         return builder.toString();
     }
 
-    private static List<String> formatValue(String[] array) {
-        List<String> data = new ArrayList<>();
+    private static List<Long> formatValue(String[] array) {
+        List<Long> data = new ArrayList<>();
         for (String s : array) {
             if (StringHelper.isNumber(s)) {
-                data.add(s);
+                data.add(Long.valueOf(s));
             }
         }
         return data;

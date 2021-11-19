@@ -10,21 +10,21 @@ public class CpuUsageDTO {
     /**
      * 任务进程数
      */
-    private String taskCount;
+    private Integer taskCount;
     /**
      * 用户态使用的cpu时间比
      */
-    private String userRatio;
+    private Float userRatio;
     /**
      * 系统态使用的cpu时间比
      */
-    private String systemRatio;
+    private Float systemRatio;
     /**
      * 用做nice加权的进程分配的用户态cpu时间比
      */
-    private String niceRatio;
+    private Float niceRatio;
     /**
      * 空闲的cpu时间比
      */
-    private String freeRatio;
+    private Float freeRatio;
 }
