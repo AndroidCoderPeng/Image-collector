@@ -8,6 +8,10 @@ import lombok.Data;
 @Data
 public class CpuUsageDTO {
     /**
+     * 任务进程数
+     */
+    private String taskCount;
+    /**
      * 用户态使用的cpu时间比
      */
     private String userRatio;

@@ -142,6 +142,10 @@ public class System {
             String result = parseResult(session.getStdout());
             String[] split = result.split("\n");
 
+            String taskValue = split[1];
+            List<String> taskData = formatStringValue(taskValue.split(" "));
+            dto.setTaskCount(taskData.get(1));
+
             String cpuValue = split[2];
             List<String> cpuData = formatStringValue(cpuValue.split(" "));
 
