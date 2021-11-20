@@ -1,10 +1,11 @@
 package com.pengxh.web.imagecollector.socket.udp;
 
-import com.pengxh.web.imagecollector.service.ISocketService;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -28,11 +29,7 @@ public class BootNettyUdpClient {
     @Value("${socket.udp.port}")
     private Integer port;
 
-    private final ISocketService socketService;
-
-    public BootNettyUdpClient(ISocketService socketService) {
-        this.socketService = socketService;
-    }
+    private Channel channel;
 
     public void bind() {
         log.info("BootNettyUdpClient Start");
@@ -42,34 +39,25 @@ public class BootNettyUdpClient {
             clientBootstrap.group(group)
                     .channel(NioDatagramChannel.class)
                     .option(ChannelOption.SO_BROADCAST, true)
-                    .handler(new ChannelInboundHandlerAdapter() {
-                        @Override
-                        public void channelRead(ChannelHandlerContext ctx, Object msg) {
-                            log.info("channelRead " + msg);
-                        }
+                    .handler(new ClientHandlerAdapter());
+            channel = clientBootstrap.bind(0).sync().channel();
 
-                        @Override
-                        public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-                            log.info("channelReadComplete");
-                        }
-
-                        @Override
-                        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                            log.info("exceptionCaught ===> " + cause);
-                            ctx.close();
-                        }
-                    });
-            Channel channel = clientBootstrap.bind(0).sync().channel();
-
-            ByteBuf byteBuf = Unpooled.copiedBuffer("I am UDP Client", CharsetUtil.UTF_8);
-            DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(host, port));
-            channel.writeAndFlush(datagramPacket);
+            sendDataPacket();
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             group.shutdownGracefully();
+        }
+    }
+
+    public void sendDataPacket() {
+        if (channel != null && channel.isActive()) {
+            log.info("sendDataPacket");
+            ByteBuf byteBuf = Unpooled.copiedBuffer("I am UDP Client", CharsetUtil.UTF_8);
+            DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(host, port));
+            channel.writeAndFlush(datagramPacket);
         }
     }
 }
