@@ -1,4 +1,4 @@
-package com.pengxh.web.imagecollector.socket;
+package com.pengxh.web.imagecollector.socket.tcp;
 
 import com.pengxh.web.imagecollector.service.ISocketService;
 import io.netty.channel.ChannelHandlerContext;

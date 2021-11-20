@@ -1,6 +1,6 @@
 package com.pengxh.web.imagecollector;
 
-import com.pengxh.web.imagecollector.socket.BootNettyServer;
+import com.pengxh.web.imagecollector.socket.tcp.BootNettyServer;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;

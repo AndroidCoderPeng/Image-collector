@@ -23,7 +23,7 @@ import java.util.List;
  * @author a203
  */
 @Slf4j
-public class System {
+public class SystemHelper {
 
     /**
      * 判断IP地址是否可用

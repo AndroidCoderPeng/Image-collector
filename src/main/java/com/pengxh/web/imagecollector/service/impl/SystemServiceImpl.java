@@ -4,7 +4,7 @@ import ch.ethz.ssh2.Connection;
 import com.alibaba.fastjson.JSON;
 import com.pengxh.web.imagecollector.dto.*;
 import com.pengxh.web.imagecollector.service.ISystemService;
-import com.pengxh.web.imagecollector.utils.System;
+import com.pengxh.web.imagecollector.utils.SystemHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,27 +24,27 @@ public class SystemServiceImpl implements ISystemService {
 
     @Override
     public void obtainLinuxServerInfo() {
-        Connection connection = System.connectServer("111.198.10.15", 11301, "root", "Casic203");
+        Connection connection = SystemHelper.connectServer("111.198.10.15", 11301, "root", "Casic203");
         try {
             /**
              * 获取服务器总内存、使用、空闲等情况
              * */
-            MemoryUsageDTO memoryUsage = System.getMemoryUsage(connection.openSession());
+            MemoryUsageDTO memoryUsage = SystemHelper.getMemoryUsage(connection.openSession());
 
             /**
              * 获取服务器硬盘、使用、空闲等情况
              * */
-            List<StorageUsageDTO> storageUsage = System.getStorageUsage(connection.openSession());
+            List<StorageUsageDTO> storageUsage = SystemHelper.getStorageUsage(connection.openSession());
 
             /**
              * 获取CPU使用率、内存使用、IO读写情况
              * */
-            CpuUsageDTO cpuUsage = System.getCpuUsage(connection.openSession());
+            CpuUsageDTO cpuUsage = SystemHelper.getCpuUsage(connection.openSession());
 
             /**
              * 获取当前服务器进程信息
              * */
-            List<RunningJavaDTO> javaProcess = System.getRunningJavaProcess(connection.openSession());
+            List<RunningJavaDTO> javaProcess = SystemHelper.getRunningJavaProcess(connection.openSession());
 
             SystemDTO systemDTO = new SystemDTO();
             systemDTO.setMemoryUsage(memoryUsage);
