@@ -9,12 +9,12 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author a203
@@ -42,7 +42,7 @@ public class BootNettyUdpClient {
                     .handler(new ClientHandlerAdapter());
             channel = clientBootstrap.bind(0).sync().channel();
 
-            sendDataPacket();
+            sendDataPacket("Client OnLine".getBytes(StandardCharsets.UTF_8));
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {
@@ -52,10 +52,9 @@ public class BootNettyUdpClient {
         }
     }
 
-    public void sendDataPacket() {
+    public void sendDataPacket(byte[] message) {
         if (channel != null && channel.isActive()) {
-            log.info("sendDataPacket");
-            ByteBuf byteBuf = Unpooled.copiedBuffer("I am UDP Client", CharsetUtil.UTF_8);
+            ByteBuf byteBuf = Unpooled.copiedBuffer(message);
             DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(host, port));
             channel.writeAndFlush(datagramPacket);
         }

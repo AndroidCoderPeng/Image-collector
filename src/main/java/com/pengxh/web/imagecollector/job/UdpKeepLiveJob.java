@@ -1,6 +1,7 @@
 package com.pengxh.web.imagecollector.job;
 
 import com.pengxh.web.imagecollector.socket.udp.BootNettyUdpClient;
+import com.pengxh.web.imagecollector.utils.MessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,6 @@ public class UdpKeepLiveJob {
 
     @Scheduled(cron = "0/10 * *  * * ? ")
     public void execute() {
-        udpClient.sendDataPacket();
+        udpClient.sendDataPacket(MessageHelper.createHeartBeatMsg());
     }
 }
