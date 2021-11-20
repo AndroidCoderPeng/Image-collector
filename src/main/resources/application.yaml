@@ -9,7 +9,10 @@ spring:
     password: 123456
 
 socket:
-  port: 9091
+  tcp:
+    port: 9091
+  udp:
+    port: 9991
 
 serialPort:
   #天通串口名，Windows下以COM开头，Linux和MacOS下串口名如下所示

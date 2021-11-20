@@ -18,14 +18,14 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class BootNettyServer {
+public class BootNettyTcpServer {
 
-    @Value("${socket.port}")
+    @Value("${socket.tcp.port}")
     private Integer port;
 
     private final ISocketService socketService;
 
-    public BootNettyServer(ISocketService socketService) {
+    public BootNettyTcpServer(ISocketService socketService) {
         this.socketService = socketService;
     }
 

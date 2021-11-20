@@ -1,6 +1,7 @@
 package com.pengxh.web.imagecollector;
 
-import com.pengxh.web.imagecollector.socket.tcp.BootNettyServer;
+import com.pengxh.web.imagecollector.socket.tcp.BootNettyTcpServer;
+import com.pengxh.web.imagecollector.socket.udp.BootNettyUdpServer;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +24,9 @@ import javax.annotation.Resource;
 public class ImageCollectorApplication implements CommandLineRunner {
 
     @Resource
-    private BootNettyServer bootNettyServer;
+    private BootNettyTcpServer tcpServer;
+    @Resource
+    private BootNettyUdpServer udpServer;
 
     public static void main(String[] args) {
         SpringApplication.run(ImageCollectorApplication.class, args);
@@ -36,6 +39,7 @@ public class ImageCollectorApplication implements CommandLineRunner {
         /**
          * 使用异步注解方式启动netty服务端服务
          */
-        bootNettyServer.bind();
+//        tcpServer.bind();
+        udpServer.bind();
     }
 }
