@@ -11,14 +11,16 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Administrator
  */
 @Slf4j
-@Service
-public class BootNettyTcpServer {
+@Component
+public class BootNettyTcpServer implements CommandLineRunner {
 
     @Value("${socket.tcp.port}")
     private Integer port;
@@ -29,7 +31,9 @@ public class BootNettyTcpServer {
         this.socketService = socketService;
     }
 
-    public void bind() {
+    @Async
+    @Override
+    public void run(String... args) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -66,7 +70,7 @@ public class BootNettyTcpServer {
                             pipeline.addLast(new ChannelHandlerAdapter(socketService));
                         }
                     });
-            log.info("Socket port has open, and Port:" + port + " has been occupied....");
+            log.info(this.getClass().getSimpleName() + " has been started, and Port:" + port + " has been occupied....");
             /**
              * 绑定端口，同步等待成功
              */

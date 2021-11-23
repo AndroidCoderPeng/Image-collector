@@ -10,7 +10,9 @@ import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
@@ -19,8 +21,8 @@ import java.util.Arrays;
  * @author a203
  */
 @Slf4j
-@Service
-public class BootNettyUdpClient {
+@Component
+public class BootNettyUdpClient implements CommandLineRunner {
 
     @Value("${socket.udp.host}")
     private String host;
@@ -34,7 +36,9 @@ public class BootNettyUdpClient {
      */
     private boolean startHeartBeat = false;
 
-    public void bind() {
+    @Async
+    @Override
+    public void run(String... args) {
         log.info("BootNettyUdpClient Start");
         EventLoopGroup group = new NioEventLoopGroup();
         try {
