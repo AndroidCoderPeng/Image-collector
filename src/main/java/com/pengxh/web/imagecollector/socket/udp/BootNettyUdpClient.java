@@ -24,11 +24,14 @@ import java.util.Arrays;
 @Component
 public class BootNettyUdpClient implements CommandLineRunner {
 
-    @Value("${socket.udp.host}")
-    private String host;
+    @Value("${socket.udp.serverHost}")
+    private String serverHost;
 
-    @Value("${socket.udp.port}")
-    private Integer port;
+    @Value("${socket.udp.serverPort}")
+    private Integer serverPort;
+
+    @Value("${socket.udp.localHost}")
+    private String localHost;
 
     private Channel channel;
     /**
@@ -61,9 +64,9 @@ public class BootNettyUdpClient implements CommandLineRunner {
             channel = clientBootstrap.bind(0).sync().channel();
 
             byte[] loginMsg = MessageHelper.createClientLoginMsg("111.198.10.15", 12210,
-                    "192.168.43.66", 53460, 53460);
+                    localHost, 53460, 53460);
             ByteBuf byteBuf = Unpooled.copiedBuffer(loginMsg);
-            DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(host, port));
+            DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(serverHost, serverPort));
             channel.writeAndFlush(datagramPacket);
             log.info("UDP登录指令 ===> " + Arrays.toString(loginMsg));
 
@@ -99,7 +102,7 @@ public class BootNettyUdpClient implements CommandLineRunner {
         if (channel != null && channel.isActive()) {
             if (startHeartBeat) {
                 ByteBuf byteBuf = Unpooled.copiedBuffer(message);
-                DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(host, port));
+                DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(serverHost, serverPort));
                 channel.writeAndFlush(datagramPacket);
                 log.info("UDP心跳指令 ===> " + Arrays.toString(message));
             }

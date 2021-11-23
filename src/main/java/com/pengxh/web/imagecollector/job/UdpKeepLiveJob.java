@@ -14,17 +14,17 @@ import javax.annotation.Resource;
 @Component
 public class UdpKeepLiveJob {
 
-    @Value("${socket.udp.host}")
-    private String host;
+    @Value("${socket.udp.serverHost}")
+    private String serverHost;
 
-    @Value("${socket.udp.port}")
-    private Integer port;
+    @Value("${socket.udp.serverPort}")
+    private Integer serverPort;
 
     @Resource
     private BootNettyUdpClient udpClient;
 
     @Scheduled(cron = "0/10 * *  * * ? ")
     public void execute() {
-        udpClient.sendDataPacket(MessageHelper.createHeartBeatMsg(host, port));
+        udpClient.sendDataPacket(MessageHelper.createHeartBeatMsg(serverHost, serverPort));
     }
 }

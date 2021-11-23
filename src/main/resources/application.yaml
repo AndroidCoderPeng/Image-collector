@@ -12,8 +12,9 @@ socket:
   tcp:
     port: 9091
   udp:
-    host: 192.168.0.200
-    port: 6000
+    serverHost: 111.198.10.15
+    serverPort: 12210
+    localHost: 192.168.0.20
 
 serialPort:
   #天通串口名，Windows下以COM开头，Linux和MacOS下串口名如下所示
