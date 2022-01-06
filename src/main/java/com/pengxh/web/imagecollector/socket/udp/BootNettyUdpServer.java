@@ -2,7 +2,9 @@ package com.pengxh.web.imagecollector.socket.udp;
 
 import com.pengxh.web.imagecollector.service.ISocketService;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import lombok.extern.slf4j.Slf4j;
@@ -32,35 +34,15 @@ public class BootNettyUdpServer implements CommandLineRunner {
     public void run(String... args) {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         try {
-            /**
-             * ServerBootstrap 是一个启动NIO服务的辅助启动类
-             */
-            Bootstrap serverBootstrap = new Bootstrap();
-            /**
-             * 设置group，将bossGroup，workerGroup线程组传递到ServerBootstrap
-             */
-            serverBootstrap.group(bossGroup)
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(bossGroup)
                     .channel(NioDatagramChannel.class)
                     .option(ChannelOption.SO_BROADCAST, true)
-                    .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
-                    /**
-                     * 设置 I/O处理类,主要用于网络I/O事件，记录日志，编码、解码消息
-                     */
-                    .handler(new ChannelInitializer<Channel>() {
-
-                        @Override
-                        protected void initChannel(Channel channel) throws Exception {
-                            ChannelPipeline pipeline = channel.pipeline();
-                            /**
-                             * 自定义ChannelInboundHandlerAdapter
-                             */
-                            pipeline.addLast(new NettyUdpServerHandler(socketService));
-                        }
-                    });
+                    .handler(new NettyUdpServerHandler(socketService));
             /**
              * 绑定端口，同步等待成功
              */
-            Channel channel = serverBootstrap.bind(port).sync().channel();
+            Channel channel = bootstrap.bind(port).sync().channel();
             log.info(this.getClass().getSimpleName() + " has been started, and Port:" + port + " has been occupied....");
             /**
              * 等待服务器监听端口关闭

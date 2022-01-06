@@ -1,11 +1,13 @@
 package com.pengxh.web.imagecollector.socket.udp;
 
 import com.pengxh.web.imagecollector.service.ISocketService;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
 
 /**
  * @author a203
@@ -20,7 +22,15 @@ public class NettyUdpServerHandler extends SimpleChannelInboundHandler<DatagramP
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket) throws Exception {
-        String msg = datagramPacket.content().toString(CharsetUtil.UTF_8);
-        log.info("channelRead0 ===> " + msg);
+        ByteBuf byteBuf = datagramPacket.content();
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(bytes);
+        log.info("channelRead0 ===> " + Arrays.toString(bytes));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.close();
+        cause.printStackTrace();
     }
 }
