@@ -15,6 +15,7 @@ socket:
     serverHost: 111.198.10.15
     serverPort: 12210
     localHost: 192.168.0.20
+    port: 9092
 
 serialPort:
   #天通串口名，Windows下以COM开头，Linux和MacOS下串口名如下所示

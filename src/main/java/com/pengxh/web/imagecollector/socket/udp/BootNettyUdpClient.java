@@ -63,8 +63,8 @@ public class BootNettyUdpClient implements CommandLineRunner {
                     });
             channel = clientBootstrap.bind(0).sync().channel();
 
-            byte[] loginMsg = MessageHelper.createClientLoginMsg("111.198.10.15", 12210,
-                    localHost, 53460, 53460);
+            byte[] loginMsg = MessageHelper.createClientLoginMsg(serverHost, serverPort, localHost,
+                    53460, 53460);
             ByteBuf byteBuf = Unpooled.copiedBuffer(loginMsg);
             DatagramPacket datagramPacket = new DatagramPacket(byteBuf, new InetSocketAddress(serverHost, serverPort));
             channel.writeAndFlush(datagramPacket);

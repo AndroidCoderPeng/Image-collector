@@ -74,11 +74,11 @@ public class BootNettyTcpServer implements CommandLineRunner {
             /**
              * 绑定端口，同步等待成功
              */
-            ChannelFuture channelFuture = serverBootstrap.bind(port).sync();
+            Channel channel = serverBootstrap.bind(port).sync().channel();
             /**
              * 等待服务器监听端口关闭
              */
-            channelFuture.channel().closeFuture().sync();
+            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
